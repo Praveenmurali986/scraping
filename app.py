@@ -29,7 +29,7 @@ def index():
             prodRes = requests.get(productLink)
             prodRes.encoding='utf-8'
             prod_html = bs(prodRes.text, "html.parser")
-            print(prod_html)
+            #print(prod_html)
             commentboxes = prod_html.find_all('div', {'class': "_16PBlm"})
 
             filename = searchString + ".csv"
@@ -39,14 +39,14 @@ def index():
             reviews = []
             for commentbox in commentboxes:
                 try:
-                    #name.encode(encoding='utf-8')
+                    name.encode(encoding='utf-8')
                     name = commentbox.div.div.find_all('p', {'class': '_2sc7ZR _2V5EHH'})[0].text
 
                 except:
                     name = 'No Name'
 
                 try:
-                    #rating.encode(encoding='utf-8')
+                    rating.encode(encoding='utf-8')
                     rating = commentbox.div.div.div.div.text
 
 
@@ -54,21 +54,29 @@ def index():
                     rating = 'No Rating'
 
                 try:
-                    #commentHead.encode(encoding='utf-8')
+                    commentHead.encode(encoding='utf-8')
                     commentHead = commentbox.div.div.div.p.text
 
                 except:
                     commentHead = 'No Comment Heading'
                 try:
+
                     comtag = commentbox.div.div.find_all('div', {'class': ''})
-                    #custComment.encode(encoding='utf-8')
+
+
+
                     custComment = comtag[0].div.text
+                    custComment.encode(encoding='utf-8')
                 except Exception as e:
                     print("Exception while creating dictionary: ",e)
 
                 mydict = {"Product": searchString, "Name": name, "Rating": rating, "CommentHead": commentHead,
                           "Comment": custComment}
                 reviews.append(mydict)
+                try:
+                    fw.write(f"{searchString},{name},{rating},{commentHead},{custComment}+'\n'")
+                except Exception as e :
+                    print('file exception is ',e)
             return render_template('results.html', reviews=reviews[0:(len(reviews)-1)])
         except Exception as e:
             print('The Exception message is: ',e)
@@ -79,5 +87,5 @@ def index():
         return render_template('index.html')
 
 if __name__ == "__main__":
-    #app.run(host='127.0.0.1', port=8001, debug=True)
-	app.run(debug=True)
+    app.run(host='127.0.0.1', port=8001, debug=True)
+	#app.run(debug=True)
